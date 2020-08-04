@@ -1,5 +1,6 @@
 package com.thoughtworks.rslist.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.domain.RsEvent;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -91,6 +92,50 @@ public class RsControllerTest {
                 .andExpect(jsonPath("$[2].keyWord",is("无分类")))
                 .andExpect(jsonPath("$[3].eventName",is("第四条事件")))
                 .andExpect(jsonPath("$[3].keyWord",is("无分类")))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldModifyOneRsEvent1() throws Exception{
+        RsEvent rsEvent = new RsEvent("修改第一个事件","改动过");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonString = objectMapper.writeValueAsString(rsEvent);
+
+        mockMvc.perform(post("/rs/modify/1").content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        mockMvc.perform(get("/rs/1"))
+                .andExpect(jsonPath("$.eventName",is("修改第一个事件")))
+                .andExpect(jsonPath("$.keyWord",is("改动过")))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldModifyOneRsEvent2() throws Exception{
+        RsEvent rsEvent = new RsEvent("修改第二个事件",null);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonString = objectMapper.writeValueAsString(rsEvent);
+
+        mockMvc.perform(post("/rs/modify/2").content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/rs/2"))
+                .andExpect(jsonPath("$.eventName",is("修改第二个事件")))
+                .andExpect(jsonPath("$.keyWord",is("无分类")))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldModifyOneRsEvent3() throws Exception{
+        RsEvent rsEvent = new RsEvent(null,"改动过");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonString = objectMapper.writeValueAsString(rsEvent);
+
+        mockMvc.perform(post("/rs/modify/3").content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/rs/3"))
+                .andExpect(jsonPath("$.eventName",is("第三条事件")))
+                .andExpect(jsonPath("$.keyWord",is("改动过")))
                 .andExpect(status().isOk());
     }
 
