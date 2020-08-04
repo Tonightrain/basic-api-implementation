@@ -41,6 +41,11 @@ public class RsController {
     rsList.add(rsEvent);
   }
 
+  @PostMapping("/rs/delete/{index}")
+  public void deleteOneRsEvent(@PathVariable int index){
+    rsList.remove(index-1);
+  }
+
   @PostMapping("/rs/modify/{index}")
   public void modifyOneRsEvent(@PathVariable int index,@RequestBody RsEvent rsEvent){
     RsEvent rs = rsList.get(index-1);

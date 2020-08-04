@@ -2,6 +2,7 @@ package com.thoughtworks.rslist.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.domain.RsEvent;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -21,7 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 public class RsControllerTest {
-
 
     @Autowired
     MockMvc mockMvc;
@@ -96,6 +101,19 @@ public class RsControllerTest {
     }
 
     @Test
+    void shouldDeleteOneRsEvent() throws Exception{
+        mockMvc.perform(post("/rs/delete/1"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/rs/list"))
+                .andExpect(jsonPath("$[0].eventName",is("第二条事件")))
+                .andExpect(jsonPath("$[0].keyWord",is("无分类")))
+                .andExpect(jsonPath("$[1].eventName",is("第三条事件")))
+                .andExpect(jsonPath("$[1].keyWord",is("无分类")))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     void shouldModifyOneRsEvent1() throws Exception{
         RsEvent rsEvent = new RsEvent("修改第一个事件","改动过");
         ObjectMapper objectMapper = new ObjectMapper();
@@ -138,7 +156,4 @@ public class RsControllerTest {
                 .andExpect(jsonPath("$.keyWord",is("改动过")))
                 .andExpect(status().isOk());
     }
-
-
-
 }
