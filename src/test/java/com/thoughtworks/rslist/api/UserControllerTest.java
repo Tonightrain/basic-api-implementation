@@ -69,4 +69,16 @@ class UserControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    void ageShouldNotLessThan18() throws Exception{
+        User user = new User("Mike", "female",17,"805560811@qq.com","13667899265");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String userJson = objectMapper.writeValueAsString(user);
+
+        mockMvc.perform(post("/User").content(userJson).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+
+
 }

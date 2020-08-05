@@ -2,6 +2,8 @@ package com.thoughtworks.rslist.domain;
 
 import lombok.Data;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -14,7 +16,11 @@ public class User {
 
     @NotNull
     private String gender;
-    private int age;
+
+    @Max(100)
+    @Min(18)
+    @NotNull
+    private Integer age;
 
     private String email;
     private String phone;
