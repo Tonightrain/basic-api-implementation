@@ -4,9 +4,12 @@ public class RsEvent {
     private String eventName;
     private String keyWord;
 
-    public RsEvent(String eventName, String keyWord){
+    private User user;
+
+    public RsEvent(String eventName, String keyWord, User user){
         this.eventName = eventName;
         this.keyWord = keyWord;
+        this.user = user;
     }
 
     public String getKeyWord() {
@@ -23,5 +26,13 @@ public class RsEvent {
 
     public void setEventName(String eventName) {
         this.eventName = eventName;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
