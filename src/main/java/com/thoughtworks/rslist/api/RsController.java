@@ -1,17 +1,16 @@
 package com.thoughtworks.rslist.api;
 
 import com.thoughtworks.rslist.domain.RsEvent;
-import org.apache.tomcat.jni.Error;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
 @RestController
 public class RsController {
-  private List<RsEvent> rsList = initRsEvent();
+
+  public List<RsEvent> rsList = initRsEvent();
 
   private List<RsEvent> initRsEvent() {
     List<RsEvent> result = new ArrayList<>();
