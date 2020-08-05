@@ -50,6 +50,16 @@ class UserControllerTest {
     }
 
     @Test
+    void nameShouldNotNull() throws Exception{
+        User user = new User(null, "female",18,"805560811@qq.com","13667899265");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String userJson = objectMapper.writeValueAsString(user);
+
+        mockMvc.perform(post("/User").content(userJson).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void genderShouldNotNull() throws Exception{
         User user = new User("Mike", null,18,"805560811@qq.com","13667899265");
         ObjectMapper objectMapper = new ObjectMapper();
@@ -58,4 +68,5 @@ class UserControllerTest {
         mockMvc.perform(post("/User").content(userJson).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
+
 }
