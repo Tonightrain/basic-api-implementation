@@ -46,13 +46,13 @@ public class RsController {
   @PostMapping("/rs/event")
   public ResponseEntity addOneRsEvent(@RequestBody @Validated RsEvent rsEvent){
     rsList.add(rsEvent);
-    return ResponseEntity.created(null).build();
+    return ResponseEntity.created(null).header("index",rsList.size()+1+"").build();
   }
 
   @PostMapping("/rs/delete/{index}")
   public ResponseEntity deleteOneRsEvent(@PathVariable int index){
     rsList.remove(index-1);
-    return ResponseEntity.created(null).build();
+    return ResponseEntity.created(null).header("index",index+"").build();
   }
 
   @PostMapping("/rs/modify/{index}")
@@ -64,6 +64,6 @@ public class RsController {
     if (rsEvent.getKeyWord()!=null){
       rs.setKeyWord(rsEvent.getKeyWord());
     }
-    return ResponseEntity.created(null).build();
+    return ResponseEntity.created(null).header("index",index+"").build();
   }
 }

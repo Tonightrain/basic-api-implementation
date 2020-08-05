@@ -36,10 +36,6 @@ public class RsControllerTest {
 
     @BeforeEach
 
-//    void setUp(){
-//        User user1 = new User()
-//    }
-
     @Test
     void shouldGetRsList() throws Exception{
         mockMvc.perform(get("/rs/list"))
