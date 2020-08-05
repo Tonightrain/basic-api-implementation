@@ -182,4 +182,11 @@ public class RsControllerTest {
                 .andExpect(jsonPath("$",hasKey("user")))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void userShouldValid() throws Exception{
+        String requestJson = "{\"eventName\":\"第四条事件\",\"keyWord\":\"无分类\",\"user\":{\"name\":\"Jakeeeeee\",\"gender\":\"female\",\"age\":35,\"email\":\"505560811@qq.com\",\"phone\":\"13667899265\"}}";
+        mockMvc.perform(post("/rs/event").content(requestJson).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
 }
