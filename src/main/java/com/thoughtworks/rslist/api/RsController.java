@@ -2,6 +2,8 @@ package com.thoughtworks.rslist.api;
 
 import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.domain.User;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,8 +44,9 @@ public class RsController {
   }
 
   @PostMapping("/rs/event")
-  public void addOneRsEvent(@RequestBody @Validated RsEvent rsEvent){
+  public ResponseEntity<RsEvent> addOneRsEvent(@RequestBody @Validated RsEvent rsEvent){
     rsList.add(rsEvent);
+    return ResponseEntity.created(null).build();
   }
 
   @PostMapping("/rs/delete/{index}")
