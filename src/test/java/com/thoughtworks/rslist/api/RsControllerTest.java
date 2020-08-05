@@ -99,6 +99,10 @@ public class RsControllerTest {
                 .andExpect(jsonPath("$[2].keyWord",is("无分类")))
                 .andExpect(jsonPath("$[2]",not(hasKey("user"))))
                 .andExpect(status().isOk());
+
+        mockMvc.perform(get("/rs/list?start=0&end=9"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error",is("invalid request param")));
     }
 
     @Test
@@ -186,6 +190,15 @@ public class RsControllerTest {
     void userShouldValid() throws Exception{
         String requestJson = "{\"eventName\":\"第四条事件\",\"keyWord\":\"无分类\",\"user\":{\"name\":\"Jakeeeeee\",\"gender\":\"female\",\"age\":35,\"email\":\"505560811@qq.com\",\"phone\":\"13667899265\"}}";
         mockMvc.perform(post("/rs/event").content(requestJson).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error",is("invalid param")));
     }
+
+    @Test
+    void shouldReturnBadRequestWhenIndexOutOfBound() throws Exception{
+        mockMvc.perform(get("/rs/10"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error",is("invalid index")));
+    }
+
 }
