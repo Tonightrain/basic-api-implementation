@@ -39,4 +39,14 @@ class UserControllerTest {
         assertEquals(1,UserController.users.size());
     }
 
+    @Test
+    void shouldLessThan8OfName() throws Exception{
+        User user = new User("Mikeeeeee", "male",18,"805560811@qq.com","13667899265");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String userJson = objectMapper.writeValueAsString(user);
+
+        mockMvc.perform(post("/User").content(userJson).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
 }
