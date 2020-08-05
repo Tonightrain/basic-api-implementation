@@ -40,7 +40,7 @@ class UserControllerTest {
     }
 
     @Test
-    void shouldLessThan8OfName() throws Exception{
+    void nameShouldLessThan8() throws Exception{
         User user = new User("Mikeeeeee", "male",18,"805560811@qq.com","13667899265");
         ObjectMapper objectMapper = new ObjectMapper();
         String userJson = objectMapper.writeValueAsString(user);
@@ -49,4 +49,13 @@ class UserControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    void genderShouldNotNull() throws Exception{
+        User user = new User("Mike", null,18,"805560811@qq.com","13667899265");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String userJson = objectMapper.writeValueAsString(user);
+
+        mockMvc.perform(post("/User").content(userJson).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
 }
