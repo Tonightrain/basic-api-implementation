@@ -9,3 +9,4 @@ import java.util.List;
 public class RsController {
   private List<String> rsList = Arrays.asList("第一条事件", "第二条事件", "第三条事件");
 }
+
