@@ -3,6 +3,8 @@ package com.thoughtworks.rslist.api;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.domain.User;
+import com.thoughtworks.rslist.entity.UserEntity;
+import com.thoughtworks.rslist.repository.UserRepository;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.hasKey;
@@ -28,14 +31,17 @@ class UserControllerTest {
 
     @Autowired
     MockMvc mockMvc;
-    UserController userController;
+
+    @Autowired
+    UserRepository userRepository;
 
     @BeforeEach
-    void setUp(){
-        UserController.userList = new ArrayList<>();
-        UserController.userList.add(new User("Mike", "male",18,"805560811@qq.com","13667899265"));
-        UserController.userList.add(new User("Darcy", "female",25,"125560811@qq.com","15887899265"));
-        UserController.userList.add(new User("John", "male",30,"655560811@qq.com","16787899265"));
+    void cleanUp(){
+//        UserController.userList = new ArrayList<>();
+//        UserController.userList.add(new User("Mike", "male",18,"805560811@qq.com","13667899265"));
+//        UserController.userList.add(new User("Darcy", "female",25,"125560811@qq.com","15887899265"));
+//        UserController.userList.add(new User("John", "male",30,"655560811@qq.com","16787899265"));
+        userRepository.deleteAll();
     }
 
     @Test
@@ -44,10 +50,14 @@ class UserControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String userJson = objectMapper.writeValueAsString(user);
 
-        mockMvc.perform(post("/User").content(userJson).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/user").content(userJson).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
-        assertEquals(4,UserController.userList.size());
+
+        List<UserEntity> users = userRepository.findAll();
+        assertEquals(1,users.size());
+        assertEquals("Mike",users.get(0).getName());
     }
+
 
     @Test
     void nameShouldLessThan8() throws Exception{
@@ -55,10 +65,12 @@ class UserControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String userJson = objectMapper.writeValueAsString(user);
 
-        mockMvc.perform(post("/User").content(userJson).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/user").content(userJson).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error",is("invalid user")));
     }
+
+
 
     @Test
     void nameShouldNotNull() throws Exception{
@@ -66,7 +78,7 @@ class UserControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String userJson = objectMapper.writeValueAsString(user);
 
-        mockMvc.perform(post("/User").content(userJson).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/user").content(userJson).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error",is("invalid user")));
     }
@@ -77,7 +89,7 @@ class UserControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String userJson = objectMapper.writeValueAsString(user);
 
-        mockMvc.perform(post("/User").content(userJson).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/user").content(userJson).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error",is("invalid user")));
     }
@@ -88,7 +100,7 @@ class UserControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String userJson = objectMapper.writeValueAsString(user);
 
-        mockMvc.perform(post("/User").content(userJson).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/user").content(userJson).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error",is("invalid user")));
     }
@@ -99,7 +111,7 @@ class UserControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String userJson = objectMapper.writeValueAsString(user);
 
-        mockMvc.perform(post("/User").content(userJson).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/user").content(userJson).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error",is("invalid user")));
     }
@@ -110,7 +122,7 @@ class UserControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String userJson = objectMapper.writeValueAsString(user);
 
-        mockMvc.perform(post("/User").content(userJson).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/user").content(userJson).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error",is("invalid user")));
     }
@@ -121,14 +133,14 @@ class UserControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String userJson = objectMapper.writeValueAsString(user);
 
-        mockMvc.perform(post("/User").content(userJson).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/user").content(userJson).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error",is("invalid user")));
     }
 
     @Test
     void getUserList() throws Exception{
-        mockMvc.perform(get("/Users"))
+        mockMvc.perform(get("/users"))
                 .andExpect(jsonPath("$[0].name", is("Mike")))
                 .andExpect(jsonPath("$[0].gender", is("male")))
                 .andExpect(jsonPath("$[0].age", is(18)))

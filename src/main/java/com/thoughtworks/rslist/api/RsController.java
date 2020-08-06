@@ -2,6 +2,7 @@ package com.thoughtworks.rslist.api;
 
 import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.domain.User;
+import com.thoughtworks.rslist.exception.InvalidIndexException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -39,12 +40,18 @@ public class RsController {
   }
 
   @GetMapping("rs/{index}")
-  public ResponseEntity getOneRsEvent(@PathVariable int index){
+  public ResponseEntity getOneRsEvent(@PathVariable int index) throws InvalidIndexException {
+    if (index >rsList.size()){
+      throw  new InvalidIndexException("invalid index");
+    }
      return ResponseEntity.ok(rsList.get(index-1));
   }
 
   @PostMapping("/rs/event")
   public ResponseEntity addOneRsEvent(@RequestBody @Validated RsEvent rsEvent){
+//    if (!UserController.userList.contains(rsEvent.getUser()) ){
+//      UserController.userList.add(rsEvent.getUser());
+//    }
     rsList.add(rsEvent);
     return ResponseEntity.created(null).header("index",rsList.size()+1+"").build();
   }
