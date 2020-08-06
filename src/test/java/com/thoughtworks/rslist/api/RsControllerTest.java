@@ -1,27 +1,29 @@
 package com.thoughtworks.rslist.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thoughtworks.rslist.api.RsController;
 import com.thoughtworks.rslist.domain.RsEvent;
+import com.thoughtworks.rslist.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import com.thoughtworks.rslist.domain.User;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.awt.*;
+import java.util.ArrayList;
+
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
-import static org.hamcrest.Matchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -32,17 +34,19 @@ public class RsControllerTest {
     @Autowired
     MockMvc mockMvc;
 
+    @BeforeEach
+
     @Test
     void shouldGetRsList() throws Exception{
         mockMvc.perform(get("/rs/list"))
                 .andExpect(jsonPath("$[0].eventName",is("第一条事件")))
-                .andExpect(jsonPath("$[0].keyWord",is("无分类")))
+                .andExpect((jsonPath("$[0].keyWord",is("无分类"))))
                 .andExpect(jsonPath("$[0]",not(hasKey("user"))))
                 .andExpect(jsonPath("$[1].eventName",is("第二条事件")))
-                .andExpect(jsonPath("$[1].keyWord",is("无分类")))
+                .andExpect((jsonPath("$[1].keyWord",is("无分类"))))
                 .andExpect(jsonPath("$[1]",not(hasKey("user"))))
                 .andExpect(jsonPath("$[2].eventName",is("第三条事件")))
-                .andExpect(jsonPath("$[2].keyWord",is("无分类")))
+                .andExpect((jsonPath("$[2].keyWord",is("无分类"))))
                 .andExpect(jsonPath("$[2]",not(hasKey("user"))))
                 .andExpect(status().isOk());
     }
@@ -76,7 +80,14 @@ public class RsControllerTest {
                 .andExpect(jsonPath("$[1].keyWord",is("无分类")))
                 .andExpect(jsonPath("$[1]",not(hasKey("user"))))
                 .andExpect(status().isOk());
-
+        mockMvc.perform(get("/rs/list?start=2&end=3"))
+                .andExpect(jsonPath("$[0].eventName",is("第二条事件")))
+                .andExpect(jsonPath("$[0].keyWord",is("无分类")))
+                .andExpect(jsonPath("$[0]",not(hasKey("user"))))
+                .andExpect(jsonPath("$[1].eventName",is("第三条事件")))
+                .andExpect(jsonPath("$[1].keyWord",is("无分类")))
+                .andExpect(jsonPath("$[1]",not(hasKey("user"))))
+                .andExpect(status().isOk());
         mockMvc.perform(get("/rs/list?start=1&end=3"))
                 .andExpect(jsonPath("$[0].eventName",is("第一条事件")))
                 .andExpect(jsonPath("$[0].keyWord",is("无分类")))
@@ -151,6 +162,7 @@ public class RsControllerTest {
         mockMvc.perform(get("/rs/2"))
                 .andExpect(jsonPath("$.eventName",is("修改第二个事件")))
                 .andExpect(jsonPath("$.keyWord",is("无分类")))
+                .andExpect(jsonPath("$",not(hasKey("user"))))
                 .andExpect(status().isOk());
     }
 
