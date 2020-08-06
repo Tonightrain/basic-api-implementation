@@ -76,12 +76,12 @@ public class RsController {
     return ResponseEntity.created(null).header("index",index+"").build();
   }
 
-  @ExceptionHandler(InvalidIndexException.class)
-  public ResponseEntity exceptionHandler(InvalidIndexException ex) {
-    CommentError commentError = new CommentError();
-    commentError.setError(ex.getMessage());
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(commentError);
-  }
+//  @ExceptionHandler(InvalidIndexException.class)
+//  public ResponseEntity exceptionHandler(InvalidIndexException ex) {
+//    CommentError commentError = new CommentError();
+//    commentError.setError(ex.getMessage());
+//    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(commentError);
+//  }
 
 
 }
