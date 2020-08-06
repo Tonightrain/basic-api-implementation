@@ -47,14 +47,21 @@ class UserControllerTest {
     @Test
     void shouldRegisterUser() throws Exception {
         User user = new User("Mike", "male",18,"805560811@qq.com","13667899265");
+
+        User user2 = new User("Darcy", "female",25,"125560811@qq.com","15887899265");
         ObjectMapper objectMapper = new ObjectMapper();
         String userJson = objectMapper.writeValueAsString(user);
+        String userJson2 = objectMapper.writeValueAsString(user2);
 
-        mockMvc.perform(post("/user").content(userJson).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/user").content(userJson+userJson2).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
 
+//        List<UserEntity> users = userRepository.findAll();
+//        assertEquals(1,users.size());
+//        assertEquals("Mike",users.get(0).getName());
+
         List<UserEntity> users = userRepository.findAll();
-        assertEquals(1,users.size());
+        assertEquals(2,users.size());
         assertEquals("Mike",users.get(0).getName());
     }
 
@@ -150,15 +157,12 @@ class UserControllerTest {
 
     @Test
     void shouldGetOneUser() throws Exception{
-        User user = new User("Darcy", "female",25,"125560811@qq.com","15887899265");
+        User user = new User("John", "male",28,"655560811@qq.com","16787899265");
         ObjectMapper objectMapper = new ObjectMapper();
         String userJson = objectMapper.writeValueAsString(user);
 
-
         mockMvc.perform(post("/user").content(userJson).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
-
-        List<UserEntity> userEntityList = userRepository.findAll();
 
         mockMvc.perform(get("/user/1"))
                 .andExpect(jsonPath("$.name",is("Mike")))
@@ -170,5 +174,28 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.age",is(25)))
                 .andExpect(jsonPath("$.email",is("125560811@qq.com")))
                 .andExpect(status().isOk());
+        mockMvc.perform(get("/user/3"))
+                .andExpect(jsonPath("$.name",is("John")))
+                .andExpect(jsonPath("$.age",is(28)))
+                .andExpect(jsonPath("$.email",is("655560811@qq.com")))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldDeleteOneUser() throws Exception{
+        User user = new User("Jessica", "female",20,"666560811@qq.com","15999999265");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String userJson = objectMapper.writeValueAsString(user);
+
+        mockMvc.perform(post("/user").content(userJson).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(post("/user/delete/1"))
+                .andExpect(status().isOk());
+        List<UserEntity> users = userRepository.findAll();
+        assertEquals(1,users.size());
+        assertEquals("Darcy",users.get(0).getName());
+
+
     }
 }
