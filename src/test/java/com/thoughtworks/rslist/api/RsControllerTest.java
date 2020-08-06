@@ -19,6 +19,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import javax.persistence.Table;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -146,6 +147,15 @@ public class RsControllerTest {
                 .andExpect(status().isCreated());
         List<RsEventEntity> rsEventEntityList = rsEventRepository.findAll();
         assertEquals(1,rsEventEntityList.size());
+    }
+
+    @Test
+    void shouldUserOfAddRsEventBeRegistered() throws Exception{
+        UserEntity user = UserEntity.builder().name("Mike").gender("male").age(18).email("805560811@qq.com").phone("13667899265").build();
+        user = userRepository.save(user);
+        String rsJson = "{\"eventName\":\"第一条事件\",\"keyWord\":\"无分类\",\"userId\":2}";
+        mockMvc.perform(post("/rs/event").content(rsJson).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
 

@@ -64,9 +64,9 @@ public class RsController {
 //    }
 //    rsList.add(rsEvent);
 //    return ResponseEntity.created(null).header("index",rsList.size()+1+"").build();
-//    if (!userRepository.existsById(Integer.valueOf(rsEvent.getUserId()))){
-//      return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-//    }
+    if (!userRepository.existsById(Integer.valueOf(rsEvent.getUserId()))){
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
     RsEventEntity rsEventEntity = RsEventEntity.builder().eventName(rsEvent.getEventName())
             .keyWord(rsEvent.getKeyWord()).userId(rsEvent.getUserId()).build();
     rsEventRepository.save(rsEventEntity);
