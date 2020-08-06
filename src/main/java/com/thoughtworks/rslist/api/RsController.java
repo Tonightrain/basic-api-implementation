@@ -2,7 +2,11 @@ package com.thoughtworks.rslist.api;
 
 import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.domain.User;
+import com.thoughtworks.rslist.entity.RsEventEntity;
 import com.thoughtworks.rslist.exception.InvalidIndexException;
+import com.thoughtworks.rslist.repository.RsEventRepository;
+import com.thoughtworks.rslist.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -15,17 +19,23 @@ import java.util.List;
 
 @RestController
 public class RsController {
+  @Autowired
+  RsEventRepository rsEventRepository;
+
+  @Autowired
+  UserRepository userRepository;
+
 
   public List<RsEvent> rsList = initRsEvent();
 
   private List<RsEvent> initRsEvent() {
     List<RsEvent> result = new ArrayList<>();
-    User user1 = new User("Mike", "male",18,"805560811@qq.com","13667899265");
-    User user2 = new User("Darcy", "female",25,"125560811@qq.com","15887899265");
-    User user3 = new User("John", "male",30,"655560811@qq.com","16787899265");
-    result.add(new RsEvent("第一条事件","无分类",user1));
-    result.add(new RsEvent("第二条事件","无分类",user2));
-    result.add(new RsEvent("第三条事件","无分类",user3));
+//    User user1 = new User("Mike", "male",18,"805560811@qq.com","13667899265");
+//    User user2 = new User("Darcy", "female",25,"125560811@qq.com","15887899265");
+//    User user3 = new User("John", "male",30,"655560811@qq.com","16787899265");
+//    result.add(new RsEvent("第一条事件","无分类",user1));
+//    result.add(new RsEvent("第二条事件","无分类",user2));
+//    result.add(new RsEvent("第三条事件","无分类",user3));
     return result;
   }
 
@@ -52,8 +62,15 @@ public class RsController {
 //    if (!UserController.userList.contains(rsEvent.getUser()) ){
 //      UserController.userList.add(rsEvent.getUser());
 //    }
-    rsList.add(rsEvent);
-    return ResponseEntity.created(null).header("index",rsList.size()+1+"").build();
+//    rsList.add(rsEvent);
+//    return ResponseEntity.created(null).header("index",rsList.size()+1+"").build();
+//    if (!userRepository.existsById(Integer.valueOf(rsEvent.getUserId()))){
+//      return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+//    }
+    RsEventEntity rsEventEntity = RsEventEntity.builder().eventName(rsEvent.getEventName())
+            .keyWord(rsEvent.getKeyWord()).userId(rsEvent.getUserId()).build();
+    rsEventRepository.save(rsEventEntity);
+    return ResponseEntity.created(null).build();
   }
 
   @PostMapping("/rs/delete/{index}")

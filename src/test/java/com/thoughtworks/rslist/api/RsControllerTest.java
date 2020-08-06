@@ -5,6 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.api.RsController;
 import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.domain.User;
+import com.thoughtworks.rslist.entity.RsEventEntity;
+import com.thoughtworks.rslist.entity.UserEntity;
+import com.thoughtworks.rslist.repository.RsEventRepository;
+import com.thoughtworks.rslist.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +21,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,7 +40,17 @@ public class RsControllerTest {
     @Autowired
     MockMvc mockMvc;
 
+    @Autowired
+    RsEventRepository rsEventRepository;
+
+    @Autowired
+    UserRepository userRepository;
+
     @BeforeEach
+    void setUp(){
+        rsEventRepository.deleteAll();
+        userRepository.deleteAll();
+    }
 
     @Test
     void shouldGetRsList() throws Exception{
@@ -104,22 +119,35 @@ public class RsControllerTest {
 
     @Test
     void shouldAddOneRsEvent() throws Exception{
-        String requestJson = "{\"eventName\":\"第四条事件\",\"keyWord\":\"无分类\",\"user\":{\"name\":\"Jake\",\"gender\":\"female\",\"age\":35,\"email\":\"505560811@qq.com\",\"phone\":\"13667899265\"}}";
-        mockMvc.perform(post("/rs/event").content(requestJson).contentType(MediaType.APPLICATION_JSON))
+//        String requestJson = "{\"eventName\":\"第四条事件\",\"keyWord\":\"无分类\",\"user\":{\"name\":\"Jake\",\"gender\":\"female\",\"age\":35,\"email\":\"505560811@qq.com\",\"phone\":\"13667899265\"}}";
+//        mockMvc.perform(post("/rs/event").content(requestJson).contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isCreated());
+//        mockMvc.perform(get("/rs/list"))
+//                .andExpect(jsonPath("$[0].eventName",is("第一条事件")))
+//                .andExpect(jsonPath("$[0].keyWord",is("无分类")))
+//                .andExpect(jsonPath("$[0]",not(hasKey("user"))))
+//                .andExpect(jsonPath("$[1].eventName",is("第二条事件")))
+//                .andExpect(jsonPath("$[1].keyWord",is("无分类")))
+//                .andExpect(jsonPath("$[1]",not(hasKey("user"))))
+//                .andExpect(jsonPath("$[2].eventName",is("第三条事件")))
+//                .andExpect(jsonPath("$[2].keyWord",is("无分类")))
+//                .andExpect(jsonPath("$[3].eventName",is("第四条事件")))
+//                .andExpect(jsonPath("$[3]",not(hasKey("user"))))
+//                .andExpect(status().isOk());
+        User user1 = new User("Mike", "male",18,"805560811@qq.com","13667899265");
+//        User user2 = new User("Darcy", "female",25,"125560811@qq.com","15887899265");
+//        User user3 = new User("John", "male",30,"655560811@qq.com","16787899265");
+        UserEntity user = UserEntity.builder().name("Mike").gender("male").age(18).email("805560811@qq.com").phone("13667899265").build();
+        user = userRepository.save(user);
+        String userId = String.valueOf(user.getId());
+        String rsJson = "{\"eventName\":\"第一条事件\",\"keyWord\":\"无分类\",\"userId\":"+userId+"}";
+//        String rsJson = "{\"eventName\":\"第一条事件\",\"keyWord\":\"无分类\",\"userId\":2}";
+        mockMvc.perform(post("/rs/event").content(rsJson).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
-        mockMvc.perform(get("/rs/list"))
-                .andExpect(jsonPath("$[0].eventName",is("第一条事件")))
-                .andExpect(jsonPath("$[0].keyWord",is("无分类")))
-                .andExpect(jsonPath("$[0]",not(hasKey("user"))))
-                .andExpect(jsonPath("$[1].eventName",is("第二条事件")))
-                .andExpect(jsonPath("$[1].keyWord",is("无分类")))
-                .andExpect(jsonPath("$[1]",not(hasKey("user"))))
-                .andExpect(jsonPath("$[2].eventName",is("第三条事件")))
-                .andExpect(jsonPath("$[2].keyWord",is("无分类")))
-                .andExpect(jsonPath("$[3].eventName",is("第四条事件")))
-                .andExpect(jsonPath("$[3]",not(hasKey("user"))))
-                .andExpect(status().isOk());
+        List<RsEventEntity> rsEventEntityList = rsEventRepository.findAll();
+        assertEquals(1,rsEventEntityList.size());
     }
+
 
     @Test
     void shouldDeleteOneRsEvent() throws Exception{
@@ -138,7 +166,8 @@ public class RsControllerTest {
 
     @Test
     void shouldModifyOneRsEvent1() throws Exception{
-        RsEvent rsEvent = new RsEvent("修改第一个事件","改动过",new User("Mike", "male",18,"805560811@qq.com","13667899265"));
+//        RsEvent rsEvent = new RsEvent("修改第一个事件","改动过",new User("Mike", "male",18,"805560811@qq.com","13667899265"));
+        RsEvent rsEvent = new RsEvent("修改第一个事件","改动过","1");
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(rsEvent);
 
@@ -153,7 +182,8 @@ public class RsControllerTest {
 
     @Test
     void shouldModifyOneRsEvent2() throws Exception{
-        RsEvent rsEvent = new RsEvent("修改第二个事件",null,new User("Darcy", "female",25,"125560811@qq.com","15887899265"));
+//        RsEvent rsEvent = new RsEvent("修改第二个事件",null,new User("Darcy", "female",25,"125560811@qq.com","15887899265"));
+        RsEvent rsEvent = new RsEvent("修改第二个事件",null,"1");
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(rsEvent);
 
@@ -169,7 +199,8 @@ public class RsControllerTest {
 
     @Test
     void shouldModifyOneRsEvent3() throws Exception{
-        RsEvent rsEvent = new RsEvent(null,"改动过",new User("John", "male",30,"655560811@qq.com","16787899265"));
+//        RsEvent rsEvent = new RsEvent(null,"改动过",new User("John", "male",30,"655560811@qq.com","16787899265"));
+        RsEvent rsEvent = new RsEvent(null,"改动过","1");
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(rsEvent);
 
