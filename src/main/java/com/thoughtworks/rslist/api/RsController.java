@@ -39,7 +39,7 @@ public class RsController {
     return ResponseEntity.ok(rsList.subList(start - 1, end));
   }
 
-  @GetMapping("rs/{index}")
+  @GetMapping("/rs/{index}")
   public ResponseEntity getOneRsEvent(@PathVariable int index) throws InvalidIndexException {
     if (index >rsList.size()){
       throw  new InvalidIndexException("invalid index");

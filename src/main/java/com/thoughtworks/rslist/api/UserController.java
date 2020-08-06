@@ -6,10 +6,7 @@ import com.thoughtworks.rslist.repository.UserRepository;
 import lombok.Builder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
@@ -35,5 +32,12 @@ public class UserController {
     @GetMapping("/users")
     public ResponseEntity getUserList(){
         return ResponseEntity.ok(userList);
+    }
+
+    @GetMapping("/user/{id}")
+    public ResponseEntity getOneUser(@PathVariable Integer id){
+        UserEntity userEntity1 = UserEntity.builder().name("Darcy").gender("female").age(25).email("125560811@qq.com").phone("15887899265").build();
+        userRepository.save(userEntity1);
+        return ResponseEntity.ok(userRepository.findById(id));
     }
 }

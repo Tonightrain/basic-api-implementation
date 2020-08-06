@@ -71,7 +71,6 @@ class UserControllerTest {
     }
 
 
-
     @Test
     void nameShouldNotNull() throws Exception{
         User user = new User(null, "female",18,"805560811@qq.com","13667899265");
@@ -146,6 +145,30 @@ class UserControllerTest {
                 .andExpect(jsonPath("$[0].age", is(18)))
                 .andExpect(jsonPath("$[0].email", is("805560811@qq.com")))
                 .andExpect(jsonPath("$[0].phone", is("13667899265")))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldGetOneUser() throws Exception{
+        User user = new User("Darcy", "female",25,"125560811@qq.com","15887899265");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String userJson = objectMapper.writeValueAsString(user);
+
+
+        mockMvc.perform(post("/user").content(userJson).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated());
+
+        List<UserEntity> userEntityList = userRepository.findAll();
+
+        mockMvc.perform(get("/user/1"))
+                .andExpect(jsonPath("$.name",is("Mike")))
+                .andExpect(jsonPath("$.age",is(18)))
+                .andExpect(jsonPath("$.email",is("805560811@qq.com")))
+                .andExpect(status().isOk());
+        mockMvc.perform(get("/user/2"))
+                .andExpect(jsonPath("$.name",is("Darcy")))
+                .andExpect(jsonPath("$.age",is(25)))
+                .andExpect(jsonPath("$.email",is("125560811@qq.com")))
                 .andExpect(status().isOk());
     }
 }
