@@ -6,11 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.*;
+import java.util.List;
 
 @Builder
 @Entity
@@ -31,5 +29,8 @@ public class UserEntity {
 
     private String email;
     private String phone;
-    private int vote =10;
+    @Builder.Default
+    private int voteNum =10;
+    @OneToMany(cascade = CascadeType.REMOVE,mappedBy = "userId")
+    private List<RsEventEntity> events;
 }

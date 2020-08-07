@@ -3,7 +3,9 @@ package com.thoughtworks.rslist.api;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.domain.User;
+import com.thoughtworks.rslist.entity.RsEventEntity;
 import com.thoughtworks.rslist.entity.UserEntity;
+import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,6 +37,9 @@ class UserControllerTest {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    RsEventRepository rsEventRepository;
+
     @BeforeEach
     void cleanUp(){
 //        UserController.userList = new ArrayList<>();
@@ -42,6 +47,7 @@ class UserControllerTest {
 //        UserController.userList.add(new User("Darcy", "female",25,"125560811@qq.com","15887899265"));
 //        UserController.userList.add(new User("John", "male",30,"655560811@qq.com","16787899265"));
         userRepository.deleteAll();
+        rsEventRepository.deleteAll();
     }
 
     @Test
@@ -195,7 +201,21 @@ class UserControllerTest {
         List<UserEntity> users = userRepository.findAll();
         assertEquals(1,users.size());
         assertEquals("Darcy",users.get(0).getName());
-
-
     }
+
+    @Test
+    void shouldDeleteAllRsEVentWhenDeleteUser() throws Exception{
+        UserEntity user = UserEntity.builder().name("Mike").gender("male").age(18).email("805560811@qq.com").phone("13885689666").voteNum(10).build();
+        user = userRepository.save(user);
+        Integer userId = user.getId();
+        RsEventEntity rsEvent1 = RsEventEntity.builder().eventName("第一条事件").keyWord("分类一").userId(String.valueOf(userId)).build();
+        RsEventEntity rsEvent2 = RsEventEntity.builder().eventName("第二条事件").keyWord("分类二").userId(String.valueOf(userId)).build();
+        rsEventRepository.save(rsEvent1);
+        rsEventRepository.save(rsEvent2);
+        List<RsEventEntity> rs = rsEventRepository.findAll();
+        mockMvc.perform(post("/user/delete/1"))
+                .andExpect(status().isOk());
+        assertEquals(0,rs.size());
+    }
+
 }

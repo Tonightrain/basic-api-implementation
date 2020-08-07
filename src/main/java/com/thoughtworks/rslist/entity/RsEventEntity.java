@@ -6,10 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
 
 @Builder
 @Entity
@@ -24,4 +22,6 @@ public class RsEventEntity {
     private String eventName;
     private String keyWord;
     private String userId;
+    @ManyToOne
+    private UserEntity userEntity;
 }
