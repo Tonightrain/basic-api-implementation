@@ -31,6 +31,7 @@ public class User {
 
     @Pattern(regexp = "1\\d{10}")
     private String phone;
+    @Builder.Default
     private int voteNum =10;
 
     public User(String name, String gender, int age, String email, String phone,int voteNum){

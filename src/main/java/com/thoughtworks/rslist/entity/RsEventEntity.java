@@ -30,6 +30,6 @@ public class RsEventEntity {
     //@JoinColumn(name = "userEntity")
     private UserEntity userEntity;
 
-//    @OneToMany(mappedBy = "rsEventEntity")
-//    private List<VoteEntity> voteEntities;
+    @OneToMany(mappedBy = "rsEventEntity")
+    private List<VoteEntity> voteEntities;
 }
