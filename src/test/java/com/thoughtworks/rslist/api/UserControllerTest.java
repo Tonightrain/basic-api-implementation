@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class UserControllerTest {
 
     @Autowired
@@ -44,15 +46,7 @@ class UserControllerTest {
     void cleanUp(){
         userRepository.deleteAll();
         rsEventRepository.deleteAll();
-        //init();
     }
-
-//    public void init(){
-//        UserEntity userEntity = UserEntity.builder().name("Fake").gender("male").age(18).email("805560812@qq.com").phone("13667899265").voteNum(10).build();
-//        userRepository.save(userEntity);
-//        UserEntity userEntity1 = UserEntity.builder().name("Jack").gender("male").age(20).email("805560812@qq.com").phone("13667899265").voteNum(10).build();
-//        userRepository.save(userEntity1);
-//    }
 
     @Test
     void shouldRegisterUser() throws Exception {
