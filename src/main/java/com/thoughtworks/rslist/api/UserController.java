@@ -1,5 +1,6 @@
 package com.thoughtworks.rslist.api;
 
+import com.thoughtworks.rslist.Service.UserService;
 import com.thoughtworks.rslist.domain.User;
 import com.thoughtworks.rslist.entity.UserEntity;
 import com.thoughtworks.rslist.repository.RsEventRepository;
@@ -27,15 +28,12 @@ public class UserController {
     @Autowired
     RsEventRepository rsEventRepository;
 
+    @Autowired
+    UserService userService;
+
     @PostMapping("/user")
-    public ResponseEntity registerUser(@RequestBody @Valid User user){
-        UserEntity userEntity = UserEntity.builder().name("Mike").gender("male").age(18).email("805560811@qq.com").phone("13667899265").build();
-
-        UserEntity userEntity1 = UserEntity.builder().name("Darcy").gender("female").age(25).email("125560811@qq.com").phone("15887899265").build();
-
-        userRepository.save(userEntity);
-
-        userRepository.save(userEntity1);
+    public ResponseEntity registerUser(@RequestBody @Valid User user){ ;
+        userService.registerUser(user);
         return ResponseEntity.created(null).build();
     }
 
@@ -53,7 +51,7 @@ public class UserController {
 
     @PostMapping("/user/delete/{id}")
     public ResponseEntity deleteOneUser(@PathVariable Integer id){
-        rsEventRepository.deleteByUserId(id);
+        rsEventRepository.deleteByUserId(String.valueOf(id));
         userRepository.deleteById(id);
         return ResponseEntity.ok().build();
     }

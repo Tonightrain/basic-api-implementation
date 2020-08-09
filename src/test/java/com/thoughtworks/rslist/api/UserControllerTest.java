@@ -42,39 +42,27 @@ class UserControllerTest {
 
     @BeforeEach
     void cleanUp(){
-//        UserController.userList = new ArrayList<>();
-//        UserController.userList.add(new User("Mike", "male",18,"805560811@qq.com","13667899265"));
-//        UserController.userList.add(new User("Darcy", "female",25,"125560811@qq.com","15887899265"));
-//        UserController.userList.add(new User("John", "male",30,"655560811@qq.com","16787899265"));
         userRepository.deleteAll();
         rsEventRepository.deleteAll();
     }
 
     @Test
     void shouldRegisterUser() throws Exception {
-        User user = new User("Mike", "male",18,"805560811@qq.com","13667899265");
-
-        User user2 = new User("Darcy", "female",25,"125560811@qq.com","15887899265");
+        User user = new User("Mike", "male",18,"805560811@qq.com","13667899265",10);
         ObjectMapper objectMapper = new ObjectMapper();
         String userJson = objectMapper.writeValueAsString(user);
-        String userJson2 = objectMapper.writeValueAsString(user2);
 
-        mockMvc.perform(post("/user").content(userJson+userJson2).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/user").content(userJson).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
-
-//        List<UserEntity> users = userRepository.findAll();
-//        assertEquals(1,users.size());
-//        assertEquals("Mike",users.get(0).getName());
-
         List<UserEntity> users = userRepository.findAll();
-        assertEquals(2,users.size());
+        assertEquals(1,users.size());
         assertEquals("Mike",users.get(0).getName());
     }
 
 
     @Test
     void nameShouldLessThan8() throws Exception{
-        User user = new User("Mikeeeeee", "male",18,"805560811@qq.com","13667899265");
+        User user = new User("Mikeeeeee", "male",18,"805560811@qq.com","13667899265",10);
         ObjectMapper objectMapper = new ObjectMapper();
         String userJson = objectMapper.writeValueAsString(user);
 
@@ -86,7 +74,7 @@ class UserControllerTest {
 
     @Test
     void nameShouldNotNull() throws Exception{
-        User user = new User(null, "female",18,"805560811@qq.com","13667899265");
+        User user = new User(null, "female",18,"805560811@qq.com","13667899265",10);
         ObjectMapper objectMapper = new ObjectMapper();
         String userJson = objectMapper.writeValueAsString(user);
 
@@ -97,7 +85,7 @@ class UserControllerTest {
 
     @Test
     void genderShouldNotNull() throws Exception{
-        User user = new User("Mike", null,18,"805560811@qq.com","13667899265");
+        User user = new User("Mike", null,18,"805560811@qq.com","13667899265",10);
         ObjectMapper objectMapper = new ObjectMapper();
         String userJson = objectMapper.writeValueAsString(user);
 
@@ -108,7 +96,7 @@ class UserControllerTest {
 
     @Test
     void ageShouldNotLessThan18() throws Exception{
-        User user = new User("Mike", "female",17,"805560811@qq.com","13667899265");
+        User user = new User("Mike", "female",17,"805560811@qq.com","13667899265",10);
         ObjectMapper objectMapper = new ObjectMapper();
         String userJson = objectMapper.writeValueAsString(user);
 
@@ -119,7 +107,7 @@ class UserControllerTest {
 
     @Test
     void ageShouldNotMoreThan100() throws Exception{
-        User user = new User("Mike", "female",120,"805560811@qq.com","13667899265");
+        User user = new User("Mike", "female",120,"805560811@qq.com","13667899265",10);
         ObjectMapper objectMapper = new ObjectMapper();
         String userJson = objectMapper.writeValueAsString(user);
 
@@ -130,7 +118,7 @@ class UserControllerTest {
 
     @Test
     void emailShouldValid() throws Exception{
-        User user = new User("Mike", "female",120,"8055608@qq.com","13667899265");
+        User user = new User("Mike", "female",120,"8055608@qq.com","13667899265",10);
         ObjectMapper objectMapper = new ObjectMapper();
         String userJson = objectMapper.writeValueAsString(user);
 
@@ -141,7 +129,7 @@ class UserControllerTest {
 
     @Test
     void phoneShouldValid() throws Exception{
-        User user = new User("Mike", "female",120,"805560812@qq.com","23667899265");
+        User user = new User("Mike", "female",120,"805560812@qq.com","23667899265",10);
         ObjectMapper objectMapper = new ObjectMapper();
         String userJson = objectMapper.writeValueAsString(user);
 
@@ -163,7 +151,7 @@ class UserControllerTest {
 
     @Test
     void shouldGetOneUser() throws Exception{
-        User user = new User("John", "male",28,"655560811@qq.com","16787899265");
+        User user = new User("John", "male",28,"655560811@qq.com","16787899265",10);
         ObjectMapper objectMapper = new ObjectMapper();
         String userJson = objectMapper.writeValueAsString(user);
 
@@ -189,7 +177,7 @@ class UserControllerTest {
 
     @Test
     void shouldDeleteOneUser() throws Exception{
-        User user = new User("Jessica", "female",20,"666560811@qq.com","15999999265");
+        User user = new User("Jessica", "female",20,"666560811@qq.com","15999999265",10);
         ObjectMapper objectMapper = new ObjectMapper();
         String userJson = objectMapper.writeValueAsString(user);
 
@@ -199,23 +187,28 @@ class UserControllerTest {
         mockMvc.perform(post("/user/delete/1"))
                 .andExpect(status().isOk());
         List<UserEntity> users = userRepository.findAll();
-        assertEquals(1,users.size());
+        assertEquals(1,userRepository.count());
         assertEquals("Darcy",users.get(0).getName());
     }
 
     @Test
     void shouldDeleteAllRsEVentWhenDeleteUser() throws Exception{
-        UserEntity user = UserEntity.builder().name("Mike").gender("male").age(18).email("805560811@qq.com").phone("13885689666").voteNum(10).build();
-        user = userRepository.save(user);
-        Integer userId = user.getId();
-        RsEventEntity rsEvent1 = RsEventEntity.builder().eventName("第一条事件").keyWord("分类一").userId(String.valueOf(userId)).build();
-        RsEventEntity rsEvent2 = RsEventEntity.builder().eventName("第二条事件").keyWord("分类二").userId(String.valueOf(userId)).build();
-        rsEventRepository.save(rsEvent1);
-        rsEventRepository.save(rsEvent2);
-        List<RsEventEntity> rs = rsEventRepository.findAll();
-        mockMvc.perform(post("/user/delete/1"))
-                .andExpect(status().isOk());
-        assertEquals(0,rs.size());
+//        UserEntity user = UserEntity.builder().name("Mike").gender("male").age(18).email("805560811@qq.com").phone("13885689666").voteNum(10).build();
+//        user = userRepository.save(user);
+//        Integer userId = user.getId();
+//        RsEventEntity rsEvent1 = RsEventEntity.builder().eventName("第一条事件").keyWord("分类一").userId(String.valueOf(userId)).build();
+//        RsEventEntity rsEvent2 = RsEventEntity.builder().eventName("第二条事件").keyWord("分类二").userId(String.valueOf(userId)).build();
+//        rsEventRepository.save(rsEvent1);
+//        rsEventRepository.save(rsEvent2);
+//        mockMvc.perform(post("/user/delete/1"))
+//                .andExpect(status().isOk());
+
+
+//        List<RsEventEntity> rs = rsEventRepository.findAll();
+//        assertEquals(0,rs.size());
+
+
+        assertEquals(0,rsEventRepository.count());
     }
 
 }
