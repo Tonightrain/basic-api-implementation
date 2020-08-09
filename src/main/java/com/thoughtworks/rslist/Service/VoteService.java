@@ -9,9 +9,15 @@ import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
 import com.thoughtworks.rslist.repository.VoteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class VoteService {
@@ -42,5 +48,18 @@ public class VoteService {
         rsEventRepository.save(rsEventEntity);
         voteRepository.save(voteEntity);
         return true;
+    }
+
+    public List<Vote> getVoteRecord(Date start, Date end, Integer page, Integer size) {
+        List<VoteEntity> voteEntities;
+        if (page!=null&&size!=null&&page>0&&size>0){
+            Pageable pageable = PageRequest.of(page,size);
+            voteEntities = voteRepository.findRecordFromStartToEnd(start,end,pageable);
+        }else {
+            voteEntities =voteRepository.findRecordFromStartToEnd(start,end);
+        }
+        return voteEntities.stream().map(
+                item->Vote.builder().userId(item.getUserEntity().getId()).rsEventId(item.getRsEventEntity().getId())
+                .voteNum(item.getVoteNum()).voteTime(item.getVoteTime()).build()).collect(Collectors.toList());
     }
 }

@@ -1,10 +1,12 @@
 package com.thoughtworks.rslist.domain;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
+@Builder
 public class Vote {
     private int userId;
     private int rsEventId;
