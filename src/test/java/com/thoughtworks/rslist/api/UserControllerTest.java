@@ -44,7 +44,15 @@ class UserControllerTest {
     void cleanUp(){
         userRepository.deleteAll();
         rsEventRepository.deleteAll();
+        //init();
     }
+
+//    public void init(){
+//        UserEntity userEntity = UserEntity.builder().name("Fake").gender("male").age(18).email("805560812@qq.com").phone("13667899265").voteNum(10).build();
+//        userRepository.save(userEntity);
+//        UserEntity userEntity1 = UserEntity.builder().name("Jack").gender("male").age(20).email("805560812@qq.com").phone("13667899265").voteNum(10).build();
+//        userRepository.save(userEntity1);
+//    }
 
     @Test
     void shouldRegisterUser() throws Exception {
@@ -140,74 +148,54 @@ class UserControllerTest {
 
     @Test
     void getUserList() throws Exception{
+        UserEntity userEntity = UserEntity.builder().name("Mike").gender("male").age(18).email("805560812@qq.com").phone("13667899265").voteNum(10).build();
+        userRepository.save(userEntity);
         mockMvc.perform(get("/users"))
                 .andExpect(jsonPath("$[0].name", is("Mike")))
                 .andExpect(jsonPath("$[0].gender", is("male")))
                 .andExpect(jsonPath("$[0].age", is(18)))
-                .andExpect(jsonPath("$[0].email", is("805560811@qq.com")))
+                .andExpect(jsonPath("$[0].email", is("805560812@qq.com")))
                 .andExpect(jsonPath("$[0].phone", is("13667899265")))
                 .andExpect(status().isOk());
     }
 
     @Test
     void shouldGetOneUser() throws Exception{
-        User user = new User("John", "male",28,"655560811@qq.com","16787899265",10);
-        ObjectMapper objectMapper = new ObjectMapper();
-        String userJson = objectMapper.writeValueAsString(user);
-
-        mockMvc.perform(post("/user").content(userJson).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated());
+        UserEntity userEntity = UserEntity.builder().name("Mike").gender("male").age(18).email("805560812@qq.com").phone("13667899265").voteNum(10).build();
+        userRepository.save(userEntity);
 
         mockMvc.perform(get("/user/1"))
                 .andExpect(jsonPath("$.name",is("Mike")))
                 .andExpect(jsonPath("$.age",is(18)))
-                .andExpect(jsonPath("$.email",is("805560811@qq.com")))
-                .andExpect(status().isOk());
-        mockMvc.perform(get("/user/2"))
-                .andExpect(jsonPath("$.name",is("Darcy")))
-                .andExpect(jsonPath("$.age",is(25)))
-                .andExpect(jsonPath("$.email",is("125560811@qq.com")))
-                .andExpect(status().isOk());
-        mockMvc.perform(get("/user/3"))
-                .andExpect(jsonPath("$.name",is("John")))
-                .andExpect(jsonPath("$.age",is(28)))
-                .andExpect(jsonPath("$.email",is("655560811@qq.com")))
+                .andExpect(jsonPath("$.email",is("805560812@qq.com")))
                 .andExpect(status().isOk());
     }
 
     @Test
     void shouldDeleteOneUser() throws Exception{
-        User user = new User("Jessica", "female",20,"666560811@qq.com","15999999265",10);
-        ObjectMapper objectMapper = new ObjectMapper();
-        String userJson = objectMapper.writeValueAsString(user);
-
-        mockMvc.perform(post("/user").content(userJson).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated());
-
+        UserEntity userEntity = UserEntity.builder().name("Mike").gender("male").age(18).email("805560812@qq.com").phone("13667899265").voteNum(10).build();
+        userRepository.save(userEntity);
         mockMvc.perform(post("/user/delete/1"))
                 .andExpect(status().isOk());
         List<UserEntity> users = userRepository.findAll();
-        assertEquals(1,userRepository.count());
-        assertEquals("Darcy",users.get(0).getName());
+        assertEquals(0,userRepository.count());
     }
 
     @Test
     void shouldDeleteAllRsEVentWhenDeleteUser() throws Exception{
-//        UserEntity user = UserEntity.builder().name("Mike").gender("male").age(18).email("805560811@qq.com").phone("13885689666").voteNum(10).build();
-//        user = userRepository.save(user);
-//        Integer userId = user.getId();
-//        RsEventEntity rsEvent1 = RsEventEntity.builder().eventName("第一条事件").keyWord("分类一").userId(String.valueOf(userId)).build();
-//        RsEventEntity rsEvent2 = RsEventEntity.builder().eventName("第二条事件").keyWord("分类二").userId(String.valueOf(userId)).build();
-//        rsEventRepository.save(rsEvent1);
-//        rsEventRepository.save(rsEvent2);
-//        mockMvc.perform(post("/user/delete/1"))
-//                .andExpect(status().isOk());
-
-
-//        List<RsEventEntity> rs = rsEventRepository.findAll();
-//        assertEquals(0,rs.size());
-
-
+        UserEntity user = UserEntity.builder().name("Mike").gender("male").age(18).email("805560811@qq.com").phone("13885689666").voteNum(10).build();
+        user = userRepository.save(user);
+        UserEntity user1 = UserEntity.builder().name("Jack").gender("male").age(18).email("805560811@qq.com").phone("13885689666").voteNum(10).build();
+        user1 = userRepository.save(user1);
+        Integer userId = user1.getId();
+        RsEventEntity rsEvent1 = RsEventEntity.builder().eventName("第一条事件").keyWord("分类一").userId(String.valueOf(userId)).build();
+        RsEventEntity rsEvent2 = RsEventEntity.builder().eventName("第二条事件").keyWord("分类二").userId(String.valueOf(userId)).build();
+        rsEventRepository.save(rsEvent1);
+        rsEventRepository.save(rsEvent2);
+        mockMvc.perform(post("/user/delete/2"))
+                .andExpect(status().isOk());
+        List<RsEventEntity> rs = rsEventRepository.findAll();
+        assertEquals(0,rs.size());
         assertEquals(0,rsEventRepository.count());
     }
 

@@ -3,6 +3,7 @@ package com.thoughtworks.rslist.api;
 import com.thoughtworks.rslist.Service.UserService;
 import com.thoughtworks.rslist.domain.User;
 import com.thoughtworks.rslist.entity.UserEntity;
+import com.thoughtworks.rslist.exception.InvalidIndexException;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
 import lombok.Builder;
@@ -38,21 +39,18 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity getUserList(){
-        return ResponseEntity.ok(userList);
+    public ResponseEntity getUserList(@RequestParam(required = false) Integer page,@RequestParam(required = false) Integer size){
+        return ResponseEntity.ok(userService.getUserList(page,size));
     }
 
     @GetMapping("/user/{id}")
-    public ResponseEntity getOneUser(@PathVariable Integer id){
-        UserEntity userEntity1 = UserEntity.builder().name("John").gender("male").age(28).email("655560811@qq.com").phone("16787899265").build();
-        userRepository.save(userEntity1);
-        return ResponseEntity.ok(userRepository.findById(id));
+    public ResponseEntity getOneUser(@PathVariable Integer id) throws InvalidIndexException {
+        return ResponseEntity.ok(userService.getOneUser(id));
     }
 
     @PostMapping("/user/delete/{id}")
     public ResponseEntity deleteOneUser(@PathVariable Integer id){
-        rsEventRepository.deleteByUserId(String.valueOf(id));
-        userRepository.deleteById(id);
-        return ResponseEntity.ok().build();
+        boolean flag = userService.deleteOneUser(id);
+        return flag?ResponseEntity.ok().build():ResponseEntity.badRequest().build();
     }
 }

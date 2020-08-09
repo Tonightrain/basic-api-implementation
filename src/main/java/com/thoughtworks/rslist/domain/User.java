@@ -1,10 +1,17 @@
 package com.thoughtworks.rslist.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import javax.validation.Valid;
 import javax.validation.constraints.*;
 
+@Builder
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
     @Size(max = 8)
