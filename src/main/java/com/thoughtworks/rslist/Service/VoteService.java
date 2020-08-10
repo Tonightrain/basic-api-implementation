@@ -50,16 +50,4 @@ public class VoteService {
         return true;
     }
 
-    public List<Vote> getVoteRecord(Date start, Date end, Integer page, Integer size) {
-        List<VoteEntity> voteEntities;
-        if (page!=null&&size!=null&&page>0&&size>0){
-            Pageable pageable = PageRequest.of(page,size);
-            voteEntities = voteRepository.findRecordFromStartToEnd(start,end,pageable);
-        }else {
-            voteEntities =voteRepository.findRecordFromStartToEnd(start,end);
-        }
-        return voteEntities.stream().map(
-                item->Vote.builder().userId(item.getUserEntity().getId()).rsEventId(item.getRsEventEntity().getId())
-                .voteNum(item.getVoteNum()).voteTime(item.getVoteTime()).build()).collect(Collectors.toList());
-    }
 }

@@ -12,10 +12,4 @@ import java.util.List;
 
 public interface VoteRepository extends CrudRepository<VoteEntity,Integer> {
     List<VoteEntity> findAll();
-
-    @Query("select v from VoteEntity v where v.voteTime > :start and v.voteTime < .end")
-    List<VoteEntity> findRecordFromStartToEnd(Date start, Date end, Pageable pageable);
-
-    @Query("select v from VoteEntity v where v.voteTime > :start and v.voteTime < .end")
-    List<VoteEntity> findRecordFromStartToEnd(Date start, Date end);
 }
